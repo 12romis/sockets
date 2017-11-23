@@ -1,0 +1,128 @@
+{% extends 'example/_base.html' %}
+
+{% block content %}
+    <style>
+        #messages {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        #messages li {
+            border: 1px solid grey;
+            list-style: none;
+            padding: 7px;
+            margin: 10px 0;
+        }
+
+        .msg-user {
+            font-weight: bolder;
+        }
+
+        .msg-info-block {
+            padding: 5px;
+        {#        float: left;#} border: 2px solid aqua;
+{#            max-width: 245px;#}
+        }
+        .people{
+            border: 1px solid cadetblue;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+        #message_body{
+            width: 100%;
+        }
+        #send-msg-button{
+            width: 50%;
+        }
+
+    </style>
+
+    <p>Hello, <span class="msg-user">{{ me.username }}</span>, <a href="{% url 'channel:log_out' %}">Log out</a></p>
+    <div class="people">
+        <p>People in this chat:</p>
+        <ul>
+            {% for user in users %}
+
+                <li data-username="{{ user.username|escape }}">
+                    {{ user.username|escape }}: {{ user.status|default:'Offline' }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <p>Messages:</p>
+    <ul id="messages">
+        {% for msg in messages %}
+            <li>
+                <p class="msg-info-block">
+                    <span class="msg-user">{{ msg.user }}</span> at
+                    <span class="msg-date">{{ msg.created_at }}</span>
+                </p>
+
+                <p class="msg-body">{{ msg.body }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <p style="padding-left: 41px;text-align: center;">
+        <textarea name="body" id="message_body" cols="60" rows="2" placeholder="Write here you message"></textarea>
+        <button id="send-msg-button">Send</button>
+    </p>
+
+{% endblock content %}
+
+{% block script %}
+    <script>
+        var socket = new WebSocket('ws://' + window.location.host + '/users/');
+
+        socket.onopen = function open() {
+            console.log('WebSockets connection created.');
+        };
+
+        socket.onmessage = function message(event) {
+            var data = JSON.parse(event.data);
+            // екануємо JavaScript щоб запобігти XSS-атакам
+            var username = encodeURI(data['username']);
+
+            if (data['message']) {
+
+                var html = '<li>\
+                    <p class="msg-info-block">\
+                        <span class="msg-user">' + data['username'] + '</span> at \
+                        <span class="msg-date">' + data['date'] + '</span>\
+                    </p>\
+                    <p class="msg-body">' + data['body'] + '</p>\
+                </li>';
+
+                $('#messages').append(html);
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+
+            } else {
+                var user = $('li').filter(function () {
+                    return $(this).data('username') == username;
+                });
+
+                if (data['is_logged_in']) {
+                    user.html(username + ': Online');
+                }
+                else {
+                    user.html(username + ': Offline');
+                }
+            }
+
+        };
+
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.onopen();
+        }
+
+
+        $("#messages").scrollTop($("#messages")[0].scrollHeight);
+
+        $('#send-msg-button').click(function (e) {
+            var body = $('#message_body').val();
+            console.log(body);
+            socket.send(body);
+            $('#message_body').val('');
+        })
+    </script>
+{% endblock script %}
