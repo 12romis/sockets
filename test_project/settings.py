@@ -25,7 +25,7 @@ SECRET_KEY = '*dro8c7ebt237=9^3tc*5l3zyi7*xkcf!32@^v$#i#n#eoz)nl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['atc2.aboutcode.top']
 
 
 # Application definition
