@@ -49,4 +49,4 @@ def prod():
     env.branch = 'master'
     env.user = 'root'
     # env.key_filename = ["~/.ssh/id_rsa", ]
-    env.path = '/home/env2/sockets'
+    env.path = '/home/env3/sockets'

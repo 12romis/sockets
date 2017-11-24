@@ -34,6 +34,12 @@
         #send-msg-button{
             width: 50%;
         }
+        .online{
+            color: green;
+        }
+        .offline{
+            color: red;
+        }
 
     </style>
 
@@ -44,7 +50,7 @@
             {% for user in users %}
 
                 <li data-username="{{ user.username|escape }}">
-                    {{ user.username|escape }}: {{ user.status|default:'Offline' }}
+                    {{ user.username|escape }}: {{ user.status|default:'<span class="offline">Offline</span>'|safe }}
                 </li>
             {% endfor %}
         </ul>
@@ -102,10 +108,10 @@
                 });
 
                 if (data['is_logged_in']) {
-                    user.html(username + ': Online');
+                    user.html(username + ': <span class="online">Online</span>');
                 }
                 else {
-                    user.html(username + ': Offline');
+                    user.html(username + ': <span class="offline">Offline</span>');
                 }
             }
 

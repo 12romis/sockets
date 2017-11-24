@@ -23,7 +23,8 @@ def user_list(request):
     """
     users = User.objects.select_related('logged_in_user')
     for user in users:
-        user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
+        user.status = '<span class="online">Online</span>' if hasattr(user, 'logged_in_user') else \
+            '<span class="offline">Offline</span>'
     messages = Messages.objects.select_related('user').order_by('-created_at')[:30]
     return render(request, 'example/user_list.html', {
         'users': users,

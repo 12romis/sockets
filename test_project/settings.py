@@ -25,7 +25,7 @@ SECRET_KEY = '*dro8c7ebt237=9^3tc*5l3zyi7*xkcf!32@^v$#i#n#eoz)nl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['atc2.aboutcode.top']
+ALLOWED_HOSTS = ['atc2.aboutcode.top', '127.0.0.1']
 
 
 # Application definition
@@ -129,19 +129,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "channel.routing.channel_routing",
-    },
-}
-
 # CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'asgi_redis.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [('localhost', 6379)],
-#         },
-#         'ROUTING': 'channel.routing.channel_routing',
-#     }
+#     "default": {
+#         "BACKEND": "asgiref.inmemory.ChannelLayer",
+#         "ROUTING": "channel.routing.channel_routing",
+#     },
 # }
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+        'ROUTING': 'channel.routing.channel_routing',
+    }
+}
